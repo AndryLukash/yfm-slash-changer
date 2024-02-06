@@ -1,9 +1,7 @@
-# This is a sample Python script.
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
+import PySimpleGUI as sg
 import os
+
 
 # Функция для замены символов в строке и сохранения изменений в файле
 def replace_and_save(dir_name, filename):
@@ -17,10 +15,41 @@ def replace_and_save(dir_name, filename):
             file.write(line)
 
 
-# Получаем список файлов с расширением .md в текущей директории
-dir_name = 'D:\\WorkJob\\backups\\browser\\policy_test\\'
-md_files = [file for file in os.listdir('D:\\WorkJob\\backups\\browser\\policy_test') if file.endswith('.md')]
+sg.theme('Dark Blue 3')  # please make your windows colorful
 
-# Проходим по каждому файлу, меняем символы и сохраняем изменения
-for file in md_files:
-    replace_and_save(dir_name=dir_name, filename=file)
+layout = [[sg.Text('Будем менять "\\" на "/"')],
+      [sg.Text('Выбор каталога:', size=(15, 1)), sg.InputText(key='-text-'), sg.FolderBrowse()],
+      [sg.Button('OK', enable_events=True, key='-FUNCTION-', font='Helvetica 10'), sg.Cancel()] ]
+
+
+
+
+
+
+window = sg.Window('md slash changer', layout)
+
+# запускаем основной бесконечный цикл
+while True:
+    # получаем события, произошедшие в окне
+    event, values = window.read()
+    # если нажали на крестик
+    if event in (sg.WIN_CLOSED, 'Exit'):
+        # выходим из цикла
+        break
+    # если нажали на кнопку
+    if event == '-FUNCTION-':
+        # запускаем связанную функцию
+        dir_name = values['-text-']
+        # print(dir_name)
+        #dir_name = dir_name.replace('/', '\\')
+        dir_name = dir_name + "/"
+        # print(dir_name)
+        md_files = [file for file in os.listdir(dir_name) if file.endswith('.md')]
+        print(md_files)
+        # Проходим по каждому файлу, меняем символы и сохраняем изменения
+        for file in md_files:
+            replace_and_save(dir_name=dir_name, filename=file)
+        sg.popup('Готово!')
+    
+# закрываем окно и освобождаем используемые ресурсы
+window.close()
